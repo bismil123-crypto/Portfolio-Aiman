@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aiman Fareed | Software Engineer</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              display: ['Space Grotesk', 'sans-serif'],
+            },
+            colors: {
+              cyber: {
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                200: '#bae6fd',
+                300: '#7dd3fc',
+                400: '#38bdf8',
+                500: '#0ea5e9',
+                600: '#0284c7',
+                700: '#0369a1',
+                800: '#075985',
+                900: '#0c4a6e',
+                950: '#082f49',
+              }
+            },
+            animation: {
+              'blob': 'blob 7s infinite',
+              'spin-slow': 'spin 10s linear infinite',
+            },
+            keyframes: {
+              blob: {
+                '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- Import Map for Gemini SDK -->
+    <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.run/@google/genai",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.25"
+  }
+}
+</script>
+
+    <style>
+      body {
+        background-color: #0f172a;
+        color: #f8fafc;
+        overflow-x: hidden;
+      }
+      .glass-panel {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      /* Animation Classes */
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+      }
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      /* Chatbot Scrollbar */
+      .chat-scroll::-webkit-scrollbar {
+        width: 6px;
+      }
+      .chat-scroll::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      .chat-scroll::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 3px;
+      }
+    </style>
+</head>
+<body class="selection:bg-cyan-500/30 selection:text-cyan-200">
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-6 bg-transparent">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <a href="#home" class="flex items-center gap-2 text-white font-display font-bold text-xl tracking-wider">
+                <i data-lucide="cpu" class="text-cyan-400"></i>
+                <span>aiman</span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#home" class="text-slate-400 hover:text-cyan-400 transition-colors text-sm font-medium uppercase tracking-widest">Home</a>
+                <a href="#about" class="text-slate-400 hover:text-cyan-400 transition-colors text-sm font-medium uppercase tracking-widest">About</a>
+                <a href="#skills" class="text-slate-400 hover:text-cyan-400 transition-colors text-sm font-medium uppercase tracking-widest">Skills</a>
+                <a href="#projects" class="text-slate-400 hover:text-cyan-400 transition-colors text-sm font-medium uppercase tracking-widest">Projects</a>
+                <a href="#creative" class="text-slate-400 hover:text-cyan-400 transition-colors text-sm font-medium uppercase tracking-widest">Creative</a>
+                <a href="#certificates" class="text-slate-400 hover:text-cyan-400 transition-colors text-sm font-medium uppercase tracking-widest">Certificates</a>
+                <a href="#contact" class="px-5 py-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium rounded-full transition-colors">Contact</a>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button id="mobile-menu-btn" class="md:hidden text-white">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Nav -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 absolute w-full top-full left-0">
+            <div class="flex flex-col p-6 gap-4">
+                <a href="#home" class="text-slate-300 hover:text-cyan-400 font-medium mobile-link">Home</a>
+                <a href="#about" class="text-slate-300 hover:text-cyan-400 font-medium mobile-link">About</a>
+                <a href="#skills" class="text-slate-300 hover:text-cyan-400 font-medium mobile-link">Skills</a>
+                <a href="#projects" class="text-slate-300 hover:text-cyan-400 font-medium mobile-link">Projects</a>
+                <a href="#creative" class="text-slate-300 hover:text-cyan-400 font-medium mobile-link">Creative</a>
+                <a href="#contact" class="text-violet-400 font-medium mobile-link">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+            <div class="absolute top-20 left-10 w-72 h-72 bg-violet-600/30 rounded-full mix-blend-multiply filter blur-3xl animate-blob opacity-50"></div>
+            <div class="absolute top-20 right-10 w-72 h-72 bg-cyan-500/30 rounded-full mix-blend-multiply filter blur-3xl animate-blob opacity-50" style="animation-delay: 2s"></div>
+            <div class="absolute -bottom-32 left-1/2 w-72 h-72 bg-pink-600/30 rounded-full mix-blend-multiply filter blur-3xl animate-blob opacity-50" style="animation-delay: 4s"></div>
+
+            <div class="container mx-auto px-6 relative z-10 text-center flex flex-col items-center">
+                <div class="mb-8 relative group reveal">
+                    <div class="w-40 h-40 md:w-48 md:h-48 rounded-full border-4 border-slate-800/80 p-1 bg-gradient-to-tr from-violet-600 to-cyan-500 shadow-[0_0_40px_rgba(139,92,246,0.3)]">
+                        <div class="w-full h-full rounded-full overflow-hidden bg-slate-900 flex items-center justify-center relative">
+                            <img src="download (17).jpg" alt="Aiman Fareed" class="w-full h-full object-cover object-top opacity-100 group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://github.com/bismil123-crypto.png'">
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 -m-2 border border-violet-500/30 rounded-full animate-spin-slow pointer-events-none"></div>
+                </div>
+
+                <div class="reveal">
+                    <div class="inline-block mb-4 px-4 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 text-sm font-medium backdrop-blur-sm">
+                        CGPA 3.91 | Software Engineering Student
+                    </div>
+                    
+                    <h1 class="text-5xl md:text-7xl font-bold font-display tracking-tight mb-6 text-white">
+                        Hello, I'm <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">Aiman Fareed</span>
+                    </h1>
+
+                    <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+                        Building the future with <span class="text-white font-medium">Python, AI</span>, and <span class="text-white font-medium">Automation</span>. 
+                        Blending engineering logic with creative design.
+                    </p>
+
+                    <div class="flex flex-wrap gap-4 justify-center mb-12">
+                        <a href="https://linkedin.com/in/aiman-fareed-2864a7333" target="_blank" class="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-full transition-all hover:scale-105 border border-slate-600">
+                            <i data-lucide="linkedin" size="20"></i> LinkedIn
+                        </a>
+                        <a href="https://github.com/bismil123-crypto" target="_blank" class="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-full transition-all hover:scale-105 border border-slate-600">
+                            <i data-lucide="github" size="20"></i> GitHub
+                        </a>
+                        <a href="#contact" class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white rounded-full transition-all hover:scale-105 shadow-lg shadow-cyan-500/25">
+                            <i data-lucide="mail" size="20"></i> Hire Me
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="#about" class="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-500 cursor-pointer animate-bounce">
+                <i data-lucide="chevron-down" size="32"></i>
+            </a>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-24 relative overflow-hidden">
+             <!-- Background SVG -->
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none">
+                 <svg width="400" height="400" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#8B5CF6" d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,79.6,-46.3C87.4,-33.5,90.1,-18,88.2,-3.3C86.3,11.4,79.9,25.3,71.3,37.8C62.7,50.3,52,61.4,39.6,68.8C27.2,76.2,13.1,79.9,-0.3,80.4C-13.7,80.9,-27.9,78.2,-40.7,71.1C-53.5,64,-65,52.5,-73.4,38.9C-81.8,25.3,-87.1,9.6,-85.4,-5.4C-83.7,-20.4,-75,-34.7,-64.1,-45.5C-53.2,-56.3,-40.1,-63.6,-26.8,-71.2C-13.5,-78.8,-0.1,-86.7,14.2,-85.8C28.5,-84.9,41,-75.2,44.7,-76.4Z" transform="translate(100 100)" />
+                </svg>
+            </div>
+
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col lg:flex-row gap-16 items-center">
+                    <div class="flex-1 space-y-8 reveal">
+                        <h2 class="text-3xl md:text-4xl font-bold font-display text-white">About <span class="text-cyan-400">Me</span></h2>
+                        <p class="text-slate-300 text-lg leading-relaxed">
+                            Software Engineering student skilled in Python, Java, C, Shell scripting, web development, and
+                            automation testing. Experienced in UI/UX design, performance testing, and AI-powered application
+                            development. Strong in problem-solving, teamwork, and communication, and currently learning
+                            graphic design and Blender 3D modeling. Seeking an internship to contribute to innovative and
+                            impactful projects.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex items-center gap-3 text-slate-400">
+                                <i data-lucide="map-pin" class="text-violet-500"></i>
+                                <span>Karachi, Pakistan</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-slate-400">
+                                <i data-lucide="phone" class="text-violet-500"></i>
+                                <span>0349-2544436</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-slate-400">
+                                <i data-lucide="mail" class="text-violet-500"></i>
+                                <span>aiman.fareed.987@gmail.com</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 w-full reveal">
+                        <h3 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                            <i data-lucide="graduation-cap" class="text-cyan-400"></i>
+                            Education Path
+                        </h3>
+                        
+                        <div class="space-y-8 relative pl-8 border-l border-slate-700">
+                            <div class="relative">
+                                <span class="absolute -left-[37px] top-1 h-4 w-4 rounded-full bg-slate-900 border-2 border-violet-500"></span>
+                                <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 hover:bg-slate-800 transition-colors">
+                                    <span class="text-cyan-400 text-sm font-mono mb-2 block">2023 - 2027</span>
+                                    <h4 class="text-xl font-bold text-white mb-1">Bachelor of Science in Software Engineering</h4>
+                                    <p class="text-slate-400">Iqra University, EDC Main Campus – Karachi</p>
+                                    <div class="mt-3 inline-block px-3 py-1 bg-violet-600/20 text-violet-300 text-xs font-bold rounded-full">
+                                        CGPA: 3.91
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute -left-[37px] top-1 h-4 w-4 rounded-full bg-slate-900 border-2 border-violet-500"></span>
+                                <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 hover:bg-slate-800 transition-colors">
+                                    <span class="text-cyan-400 text-sm font-mono mb-2 block">2020 - 2022</span>
+                                    <h4 class="text-xl font-bold text-white mb-1">Higher Secondary in Computer Science</h4>
+                                    <p class="text-slate-400">Army public College Girls ,Saddar-Karachi</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-24 relative">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold font-display text-white mb-4">Technical <span class="text-cyan-400">Arsenal</span></h2>
+                    <div class="w-20 h-1 bg-violet-600 mx-auto rounded-full"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Category 1 -->
+                    <div class="glass-panel p-6 rounded-2xl hover:border-cyan-500/50 transition-colors group reveal">
+                        <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center mb-6 group-hover:bg-cyan-500/10 transition-colors">
+                            <i data-lucide="code" class="text-cyan-400 group-hover:text-cyan-300"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">Programming</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">Python</span>
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">Java</span>
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">C</span>
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">Shell Scripting</span>
+                        </div>
+                    </div>
+                     <!-- Category 2 -->
+                    <div class="glass-panel p-6 rounded-2xl hover:border-cyan-500/50 transition-colors group reveal">
+                        <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center mb-6 group-hover:bg-cyan-500/10 transition-colors">
+                            <i data-lucide="terminal" class="text-cyan-400 group-hover:text-cyan-300"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">Frameworks & Tools</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">Django</span>
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">Tkinter</span>
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">JMeter</span>
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">Selenium</span>
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">Azure DevOps</span>
+                        </div>
+                    </div>
+                     <!-- Category 3 -->
+                    <div class="glass-panel p-6 rounded-2xl hover:border-cyan-500/50 transition-colors group reveal">
+                        <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center mb-6 group-hover:bg-cyan-500/10 transition-colors">
+                            <i data-lucide="palette" class="text-cyan-400 group-hover:text-cyan-300"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">Creative & Design</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">UI/UX Design</span>
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">Blender (3D)</span>
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">Graphic Design</span>
+                        </div>
+                    </div>
+                     <!-- Category 4 -->
+                    <div class="glass-panel p-6 rounded-2xl hover:border-cyan-500/50 transition-colors group reveal">
+                        <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center mb-6 group-hover:bg-cyan-500/10 transition-colors">
+                            <i data-lucide="users" class="text-cyan-400 group-hover:text-cyan-300"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">Soft Skills</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">Problem Solving</span>
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">Teamwork</span>
+                            <span class="text-sm px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">Communication</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-24 bg-slate-900/50 relative">
+            <div class="container mx-auto px-6">
+                <div class="mb-16 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold font-display text-white mb-4">Featured <span class="text-violet-400">Projects</span></h2>
+                    <p class="text-slate-400 max-w-2xl">A selection of my work in AI, Automation, and Web Development.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Project 1 -->
+                    <div class="group relative reveal">
+                         <div class="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-cyan-500 rounded-2xl opacity-20 group-hover:opacity-100 transition duration-500 blur"></div>
+                         <a href="https://github.com/bismil123-crypto/ai_agent" target="_blank" class="relative h-full bg-slate-900 border border-slate-700 rounded-2xl p-8 flex flex-col hover:bg-slate-800/80 transition-colors block">
+                             <div class="flex justify-between items-start mb-6">
+                                <div class="p-3 bg-violet-500/10 rounded-xl">
+                                    <i data-lucide="layers" class="text-violet-400"></i>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-mono text-cyan-400 px-2 py-1 bg-cyan-950/30 rounded border border-cyan-900/50">AI</span>
+                                    <i data-lucide="arrow-up-right" class="text-slate-500 group-hover:text-white transition-colors"></i>
+                                </div>
+                             </div>
+                             <h3 class="text-2xl font-bold text-white mb-2 flex items-center gap-2 group-hover:text-cyan-400 transition-colors">University Helpdesk AI Agent</h3>
+                             <p class="text-sm text-slate-500 mb-4 font-mono">Aug 2025</p>
+                             <ul class="space-y-2 mb-6 flex-1 text-slate-400 text-sm">
+                                 <li class="flex items-start gap-2"><span class="mt-1.5 w-1 h-1 bg-cyan-500 rounded-full flex-shrink-0"></span>Powered virtual helpdesk for university queries using Django.</li>
+                                 <li class="flex items-start gap-2"><span class="mt-1.5 w-1 h-1 bg-cyan-500 rounded-full flex-shrink-0"></span>Natural language handling for dynamic Q&A.</li>
+                             </ul>
+                             <div class="flex flex-wrap gap-2 pt-4 border-t border-slate-800">
+                                 <span class="text-xs font-medium text-slate-300">#Django</span>
+                                 <span class="text-xs font-medium text-slate-300">#Python</span>
+                                 <span class="text-xs font-medium text-slate-300">#AI</span>
+                             </div>
+                         </a>
+                    </div>
+                    <!-- Project 2 -->
+                    <div class="group relative reveal">
+                        <div class="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-cyan-500 rounded-2xl opacity-20 group-hover:opacity-100 transition duration-500 blur"></div>
+                        <a href="https://github.com/bismil123-crypto/jarvis.py" target="_blank" class="relative h-full bg-slate-900 border border-slate-700 rounded-2xl p-8 flex flex-col hover:bg-slate-800/80 transition-colors block">
+                            <div class="flex justify-between items-start mb-6">
+                               <div class="p-3 bg-violet-500/10 rounded-xl">
+                                   <i data-lucide="layers" class="text-violet-400"></i>
+                               </div>
+                               <div class="flex items-center gap-2">
+                                   <span class="text-xs font-mono text-cyan-400 px-2 py-1 bg-cyan-950/30 rounded border border-cyan-900/50">AI</span>
+                                   <i data-lucide="arrow-up-right" class="text-slate-500 group-hover:text-white transition-colors"></i>
+                               </div>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-2 flex items-center gap-2 group-hover:text-cyan-400 transition-colors">Jarvis AI Assistant</h3>
+                            <p class="text-sm text-slate-500 mb-4 font-mono">Dec 2024</p>
+                            <ul class="space-y-2 mb-6 flex-1 text-slate-400 text-sm">
+                                <li class="flex items-start gap-2"><span class="mt-1.5 w-1 h-1 bg-cyan-500 rounded-full flex-shrink-0"></span>Voice-controlled assistant for web, media, and automation.</li>
+                                <li class="flex items-start gap-2"><span class="mt-1.5 w-1 h-1 bg-cyan-500 rounded-full flex-shrink-0"></span>Complex command interpretation for system tasks.</li>
+                            </ul>
+                            <div class="flex flex-wrap gap-2 pt-4 border-t border-slate-800">
+                                <span class="text-xs font-medium text-slate-300">#Python</span>
+                                <span class="text-xs font-medium text-slate-300">#Automation</span>
+                            </div>
+                        </a>
+                   </div>
+                   <!-- Project 3 -->
+                   <div class="group relative reveal">
+                        <div class="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-cyan-500 rounded-2xl opacity-20 group-hover:opacity-100 transition duration-500 blur"></div>
+                        <a href="https://github.com/bismil123-crypto/JMeter-" target="_blank" class="relative h-full bg-slate-900 border border-slate-700 rounded-2xl p-8 flex flex-col hover:bg-slate-800/80 transition-colors block">
+                            <div class="flex justify-between items-start mb-6">
+                            <div class="p-3 bg-violet-500/10 rounded-xl">
+                                <i data-lucide="layers" class="text-violet-400"></i>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-mono text-cyan-400 px-2 py-1 bg-cyan-950/30 rounded border border-cyan-900/50">Testing</span>
+                                <i data-lucide="arrow-up-right" class="text-slate-500 group-hover:text-white transition-colors"></i>
+                            </div>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-2 flex items-center gap-2 group-hover:text-cyan-400 transition-colors">Testing and Automation</h3>
+                            <p class="text-sm text-slate-500 mb-4 font-mono">Jun 2025</p>
+                            <ul class="space-y-2 mb-6 flex-1 text-slate-400 text-sm">
+                                <li class="flex items-start gap-2"><span class="mt-1.5 w-1 h-1 bg-cyan-500 rounded-full flex-shrink-0"></span>Conducted load and stress testing using JMeter.</li>
+                                <li class="flex items-start gap-2"><span class="mt-1.5 w-1 h-1 bg-cyan-500 rounded-full flex-shrink-0"></span>Optimized system performance metrics.</li>
+                            </ul>
+                            <div class="flex flex-wrap gap-2 pt-4 border-t border-slate-800">
+                                <span class="text-xs font-medium text-slate-300">#JMeter</span>
+                                <span class="text-xs font-medium text-slate-300">#Testing</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Creative Gallery -->
+        <section id="creative" class="py-24 relative bg-slate-950">
+            <div class="container mx-auto px-6">
+                <div class="mb-12 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold font-display text-white mb-4">
+                        Creative <span class="text-pink-500">Portfolio</span>
+                    </h2>
+                    <p class="text-slate-400 max-w-2xl">
+                        Exploring the intersection of Code and Design through 3D Modeling, UI/UX, and Graphics.
+                    </p>
+                </div>
+
+                <!-- Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+                  <a href="YOUR-LINK-HERE" target="_blank" class="block">
+ <!-- Item 5: Blender (Character Model) -->
+<div class="group relative aspect-video bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hover:border-pink-500/50 transition-colors">
+
+    <!-- Video -->
+    <video src="brandblend.mp4"
+           class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+           autoplay muted loop playsinline></video>
+
+    <!-- Play Icon Overlay -->
+    <div class="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors pointer-events-none">
+        <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/50 group-hover:scale-110 transition-transform">
+            <i data-lucide="play" class="text-white ml-1"></i>
+        </div>
+    </div>
+
+    <!-- Bottom Text -->
+    <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-900 to-transparent">
+        <span class="text-xs font-bold text-pink-400 uppercase tracking-wider mb-1 block">Blender</span>
+        <h3 class="text-lg font-bold text-white">Product</h3>
+    </div>
+
+</div>
+
+
+                    <!-- Item 2: UI/UX (Clickable Figma Link) -->
+<a href="YOUR-VIDEO-LINK.mp4" target="_blank" class="group relative aspect-video bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hover:border-pink-500/50 transition-colors block">
+
+    <video src="comp.mp4"
+           class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+           autoplay muted loop playsinline></video>
+
+    <div class="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors pointer-events-none">
+        <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/50 group-hover:scale-110 transition-transform">
+            <i data-lucide="play" class="text-white ml-1"></i>
+        </div>
+    </div>
+
+    <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-900 to-transparent">
+        <span class="text-xs font-bold text-pink-400 uppercase tracking-wider mb-1 block">Blender</span>
+        <h3 class="text-lg font-bold text-white">3D Character Model</h3>
+    </div>
+
+</a>
+
+
+
+                    <!-- Item 3: UI/UX (Mobile App Figma) -->
+                    <a href="https://www.figma.com/proto/UIu2WYB88W6pDhcUgQ5PWv/Untitled?node-id=1-2&starting-point-node-id=1%3A2&t=jVLW4zeDe1vOakzX-1" target="_blank" class="group relative aspect-video bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hover:border-pink-500/50 transition-colors block">
+                        <img src="Desktop - 1.png" alt="Mobile App" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity hover:scale-105 duration-500">
+                        <div class="absolute top-2 right-2 p-2 bg-black/50 backdrop-blur-md rounded-lg z-10">
+                            <i data-lucide="figma" class="text-white"></i>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-900 to-transparent">
+                            <span class="text-xs font-bold text-pink-400 uppercase tracking-wider mb-1 block">UI/UX</span>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            website Design <i data-lucide="external-link" size="14"></i>
+                            </h3>
+                        </div>
+                    </a>
+
+                    <!-- Item 4: Graphic Design (Brand Identity) -->
+                    <div class="group relative aspect-video bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hover:border-pink-500/50 transition-colors">
+                        <img src="Screenshot 2025-10-15 194521.png" alt="Graphic" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity hover:scale-105 duration-500">
+                        <div class="absolute top-2 right-2 p-2 bg-black/50 backdrop-blur-md rounded-lg">
+                            <i data-lucide="image" class="text-white"></i>
+                        </div>
+                         <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-900 to-transparent">
+                            <span class="text-xs font-bold text-pink-400 uppercase tracking-wider mb-1 block">Graphic Design</span>
+                            <h3 class="text-lg font-bold text-white">Designs</h3>
+                        </div>
+                    </div>
+
+                    <a href="YOUR-LINK-HERE" target="_blank" class="block">
+    <!-- Item 5: Blender (Character Model) -->
+    <div class="group relative aspect-video bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hover:border-pink-500/50 transition-colors">
+
+        <!-- Video -->
+        <video src="comp.mp4"
+               class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+               muted loop></video>
+
+        <!-- Play Icon Overlay -->
+        <div class="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors pointer-events-none">
+            <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/50 group-hover:scale-110 transition-transform">
+                <i data-lucide="play" class="text-white ml-1"></i>
+            </div>
+        </div>
+
+        <!-- Bottom Text -->
+        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-900 to-transparent">
+            <span class="text-xs font-bold text-pink-400 uppercase tracking-wider mb-1 block">Blender</span>
+            <h3 class="text-lg font-bold text-white">3D Character Model</h3>
+        </div>
+
+    </div>
+</a>
+
+
+
+                </div>
+            </div>
+        </section>
+
+   <!-- Certificates -->
+<section id="certificates" class="py-24 bg-slate-900/30">
+    <div class="container mx-auto px-6">
+
+        <!-- Heading -->
+        <div class="text-center mb-16 reveal">
+            <div class="flex justify-center mb-4">
+                <div class="p-3 bg-yellow-500/10 rounded-full">
+                    <i data-lucide="award" class="text-yellow-500" width="32" height="32"></i>
+                </div>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold font-display text-white mb-4">
+                Certifications & <span class="text-yellow-500">Achievements</span>
+            </h2>
+        </div>
+
+        <!-- Certificates Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+
+            <!-- Certificate 1 -->
+            <div class="bg-slate-900 border border-slate-700 p-6 rounded-xl flex items-start gap-4 hover:bg-slate-800 transition-colors">
+                <i data-lucide="check-circle" class="text-green-500 mt-1 flex-shrink-0"></i>
+
+                <div>
+                    <!-- Certificate Image -->
+                    <img src="WhatsApp Image 2025-12-10 at 08.50.00_d07c852e.jpg"
+                         alt="Certificate 1"
+                         class="w-full h-40 object-cover rounded border border-slate-700 mb-3">
+
+                    <h3 class="text-lg font-bold text-white mb-1">Certificate 1</h3>
+                    <p class="text-slate-400 text-sm mb-1">Software Testing & Automation Bootcamp</p>
+                    <span class="text-xs font-mono text-slate-500 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                        2025
+                    </span>
+                </div>
+            </div>
+
+            <!-- Certificate 2 -->
+            <div class="bg-slate-900 border border-slate-700 p-6 rounded-xl flex items-start gap-4 hover:bg-slate-800 transition-colors">
+                <i data-lucide="check-circle" class="text-green-500 mt-1 flex-shrink-0"></i>
+
+                <div>
+                    <!-- Certificate Image -->
+                    <img src="WhatsApp Image 2025-12-10 at 08.49.35_07c77f8a.jpg"
+                         alt="Certificate 2"
+                         class="w-full h-40 object-cover rounded border border-slate-700 mb-3">
+
+                    <h3 class="text-lg font-bold text-white mb-1">Certificate 2</h3>
+                    <p class="text-slate-400 text-sm mb-1">Co-curriculum Activity</p>
+                    <span class="text-xs font-mono text-slate-500 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                        2025
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-24 relative overflow-hidden bg-slate-900/50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold font-display text-white mb-4">Get In <span class="text-violet-400">Touch</span></h2>
+                    <p class="text-slate-400 max-w-2xl mx-auto">
+                        Whether you have a question about my projects, want to discuss a job opportunity, or just want to say hi, I'd love to hear from you!
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+                    <!-- Contact Info -->
+                    <div class="space-y-8 reveal" style="transition-delay: 0.1s">
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 bg-violet-500/10 rounded-lg">
+                                <i data-lucide="mail" class="text-violet-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-1">Email</h3>
+                                <a href="mailto:aiman.fareed.987@gmail.com" class="text-slate-400 hover:text-cyan-400 transition-colors">aiman.fareed.987@gmail.com</a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 bg-cyan-500/10 rounded-lg">
+                                <i data-lucide="phone" class="text-cyan-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-1">Phone</h3>
+                                <a href="tel:0349-2544436" class="text-slate-400 hover:text-cyan-400 transition-colors">0349-2544436</a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 bg-pink-500/10 rounded-lg">
+                                <i data-lucide="map-pin" class="text-pink-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-1">Location</h3>
+                                <p class="text-slate-400">Karachi, Pakistan</p>
+                            </div>
+                        </div>
+
+                         <div class="pt-8 border-t border-slate-800">
+                            <h3 className="text-white font-bold mb-4">Follow Me</h3>
+                            <div class="flex gap-4">
+                                <a href="https://github.com/bismil123-crypto" target="_blank" class="p-3 bg-slate-800 rounded-full text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
+                                    <i data-lucide="github" size="20"></i>
+                                </a>
+                                <a href="https://linkedin.com/in/aiman-fareed-2864a7333" target="_blank" class="p-3 bg-slate-800 rounded-full text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
+                                    <i data-lucide="linkedin" size="20"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form -->
+                    <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl reveal" style="transition-delay: 0.2s">
+                        <form action="mailto:aiman.fareed.987@gmail.com" method="post" enctype="text/plain" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-1">Name</label>
+                                <input type="text" name="name" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-violet-500 transition-colors" placeholder="Your Name">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-1">Email</label>
+                                <input type="email" name="email" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-violet-500 transition-colors" placeholder="your@email.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-1">Message</label>
+                                <textarea name="message" rows="4" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-violet-500 transition-colors" placeholder="Your message..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="send" size="18"></i>
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900 py-8 border-t border-slate-800 text-center text-slate-500 text-sm">
+        <div class="container mx-auto px-6">
+            <p>© 2025 Aiman Fareed. Crafted with Code & AI.</p>
+        </div>
+    </footer>
+
+    <!-- Chatbot UI -->
+    <div id="jarvis-root" class="fixed bottom-6 right-6 z-50">
+        <!-- Button -->
+        <button id="jarvis-toggle" class="bg-gradient-to-r from-violet-600 to-cyan-500 p-4 rounded-full shadow-[0_0_20px_rgba(139,92,246,0.5)] text-white relative group transition-transform hover:scale-110">
+            <i data-lucide="bot" size="28"></i>
+            <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+            </span>
+        </button>
+
+        <!-- Chat Window -->
+        <div id="jarvis-window" class="hidden absolute bottom-16 right-0 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl w-[350px] sm:w-[400px] h-[500px] flex flex-col overflow-hidden origin-bottom-right transition-all duration-300 transform scale-90 opacity-0">
+             <!-- Header -->
+             <div class="p-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-violet-600/20 to-cyan-500/20 z-0"></div>
+                <div class="flex items-center gap-2 relative z-10">
+                    <i data-lucide="bot" class="text-cyan-400"></i>
+                    <div>
+                        <h3 class="font-bold text-white">Jarvis AI</h3>
+                    </div>
+                </div>
+                <button id="jarvis-close" class="text-slate-400 hover:text-white transition-colors relative z-10">
+                    <i data-lucide="x" size="20"></i>
+                </button>
+            </div>
+
+            <!-- Messages -->
+            <div id="jarvis-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-900/95 chat-scroll">
+                <div class="flex justify-start">
+                    <div class="bg-slate-800 text-slate-200 border border-slate-700 rounded-2xl rounded-bl-none max-w-[80%] p-3 text-sm">
+                        Hello! I'm Jarvis, Aiman's AI assistant. Ask me anything about her projects, skills, or GPA!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="p-4 bg-slate-800 border-t border-slate-700">
+                <div class="flex gap-2">
+                    <input type="text" id="jarvis-input" placeholder="Ask about Aiman's skills..." class="flex-1 bg-slate-900 border border-slate-700 rounded-full px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors">
+                    <button id="jarvis-send" class="p-2 bg-cyan-600 rounded-full text-white hover:bg-cyan-500 transition-colors">
+                        <i data-lucide="send" size="18"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import { GoogleGenAI } from "@google/genai";
+
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // ------------------ Navigation Logic ------------------
+        const navbar = document.getElementById('navbar');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('bg-slate-900/80', 'backdrop-blur-md', 'border-b', 'border-slate-800', 'py-4');
+                navbar.classList.remove('py-6', 'bg-transparent');
+            } else {
+                navbar.classList.remove('bg-slate-900/80', 'backdrop-blur-md', 'border-b', 'border-slate-800', 'py-4');
+                navbar.classList.add('py-6', 'bg-transparent');
+            }
+        });
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // ------------------ Scroll Animations ------------------
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ------------------ Chatbot Logic ------------------
+        const jarvisToggle = document.getElementById('jarvis-toggle');
+        const jarvisWindow = document.getElementById('jarvis-window');
+        const jarvisClose = document.getElementById('jarvis-close');
+        const jarvisInput = document.getElementById('jarvis-input');
+        const jarvisSend = document.getElementById('jarvis-send');
+        const messagesContainer = document.getElementById('jarvis-messages');
+
+        let isOpen = false;
+
+        function toggleChat() {
+            isOpen = !isOpen;
+            if (isOpen) {
+                jarvisWindow.classList.remove('hidden', 'scale-90', 'opacity-0');
+                jarvisWindow.classList.add('scale-100', 'opacity-100');
+            } else {
+                jarvisWindow.classList.add('scale-90', 'opacity-0', 'hidden');
+                jarvisWindow.classList.remove('scale-100', 'opacity-100');
+            }
+        }
+
+        jarvisToggle.addEventListener('click', toggleChat);
+        jarvisClose.addEventListener('click', toggleChat);
+
+        function addMessage(text, role) {
+            const div = document.createElement('div');
+            div.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'}`;
+            div.innerHTML = `
+                <div class="max-w-[80%] p-3 rounded-2xl text-sm ${role === 'user' ? 'bg-violet-600 text-white rounded-br-none' : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-bl-none'}">
+                    ${text}
+                </div>
+            `;
+            messagesContainer.appendChild(div);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function handleSend() {
+            const text = jarvisInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, 'user');
+            jarvisInput.value = '';
+            
+            // Loading indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loading-msg';
+            loadingDiv.className = 'flex justify-start';
+            loadingDiv.innerHTML = `
+                <div class="bg-slate-800 p-3 rounded-2xl rounded-bl-none flex items-center gap-2">
+                    <span class="text-xs text-slate-400">Thinking...</span>
+                </div>
+            `;
+            messagesContainer.appendChild(loadingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            try {
+                // IMPORTANT: Replace with your actual key or logic to get it. 
+                // Since this is a static file, you might need to prompt the user or hardcode it for demo.
+                // For safety in production, never hardcode keys in client-side code.
+                // This is just a placeholder logic.
+                const apiKey = localStorage.getItem('GEMINI_API_KEY') || prompt("Please enter your Google Gemini API Key to use Jarvis:");
+                
+                if (apiKey) {
+                    localStorage.setItem('GEMINI_API_KEY', apiKey);
+                    const ai = new GoogleGenAI({ apiKey: apiKey });
+                    const model = ai.models;
+
+                    const context = `
+                        You are 'Jarvis', an AI assistant for Aiman Fareed's personal portfolio website. 
+                        About Aiman: Software Engineering student, 3.91 CGPA, skilled in Python, Java, Django, AI, Automation.
+                        Contact: aiman.fareed.987@gmail.com, 0349-2544436, Karachi.
+                        Projects: University Helpdesk AI (Django), Jarvis AI (Python), JMeter Automation.
+                        Tone: Professional, enthusiastic, concise.
+                    `;
+
+                    const response = await ai.models.generateContent({
+                        model: 'gemini-2.5-flash',
+                        contents: [{
+                            role: 'user',
+                            parts: [{ text: text }]
+                        }],
+                        config: {
+                            systemInstruction: context,
+                        }
+                    });
+                    
+                    document.getElementById('loading-msg').remove();
+                    addMessage(response.text, 'model');
+                } else {
+                    document.getElementById('loading-msg').remove();
+                    addMessage("I need an API key to function. Please refresh and provide one.", 'model');
+                }
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading-msg').remove();
+                addMessage("Sorry, I encountered an error connecting to my brain.", 'model');
+            }
+        }
+
+        jarvisSend.addEventListener('click', handleSend);
+        jarvisInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+
+    </script>
+</body>
+</html>
